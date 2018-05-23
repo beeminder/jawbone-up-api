@@ -11,8 +11,9 @@ module Jawbone
 
     include HTTParty
 
-    def initialize(token)
+    def initialize(token, timeout = 10)
       @token = token
+      @timeout = timeout
     end
 
     def user
@@ -80,7 +81,8 @@ module Jawbone
         { :headers =>
           { "Authorization" => "Bearer #{token}",
             "Content-Type" => "application/x-www-form-urlencoded" },
-          :body => params
+          :body => params,
+          :timeout => @timeout
         }
       response.parsed_response
     end
@@ -90,7 +92,8 @@ module Jawbone
       url = BASE_URL + path
       response = self.class.delete url,
         { :headers =>
-          { "Authorization" => "Bearer #{token}" }
+          { "Authorization" => "Bearer #{token}" },
+          :timeout => @timeout
         }
       response.parsed_response
     end
@@ -103,7 +106,8 @@ module Jawbone
       end.sort * '&'
       full_url = url + "?" + stringified_params
       response = self.class.get full_url,
-        { :headers => { "Authorization" => "Bearer #{token}" } }
+        { :headers => { "Authorization" => "Bearer #{token}" },
+          :timeout => @timeout }
       response.parsed_response
     end
 
